@@ -16,10 +16,7 @@ function App() {
 
   return (
     <div className="app">
-      <div>
-        <button onClick={Btnclick}>click me</button>
-        <div>{counter}</div>
-      </div>
+      <Board />
     </div>
   );
 }
