@@ -3,36 +3,70 @@ import StatusMessage from './components/StatusMessage';
 import Board from './components/Board';
 import { calculateWinner } from './components/winners';
 import './styles.scss';
+import History from './components/History';
+
+const NEWGAME = { square: Array(9).fill(null), isXNext: false };
 
 function App() {
-  const [counter, setCounter] = useState(1);
-  const [square, setSquare] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(false);
+  const [history, setHistory] = useState([NEWGAME]);
 
-  const winn = calculateWinner(square);
+  const [currMove, setCurrMove] = useState(0);
+  const gameBoard = history[currMove];
+  const { winn, winnerSquare } = calculateWinner(gameBoard.square);
 
   const handleSquareClick = clickedPosition => {
-    if (square[clickedPosition] || winn) return;
-    setSquare(currSquare => {
-      return currSquare.map((val, pos) => {
-        if (clickedPosition === pos) return isXNext ? 'X' : 'O';
+    if (gameBoard.square[clickedPosition] || winn) return;
+
+    setHistory(currHistory => {
+      const isTraversing = currMove + 1 != currHistory.length;
+
+      const lastGame = isTraversing
+        ? currHistory[currMove]
+        : currHistory[currHistory.length - 1];
+      const nextSquarState = lastGame.square.map((val, pos) => {
+        if (clickedPosition === pos) return lastGame.isXNext ? 'X' : 'O';
 
         return val;
       });
+
+      const base = isTraversing
+        ? currHistory.slice(0, currHistory.indexOf(lastGame) + 1)
+        : currHistory;
+
+      return base.concat({
+        square: nextSquarState,
+        isXNext: !lastGame.isXNext,
+      });
     });
-    setIsXNext(currIsXNext => !currIsXNext);
+
+    setCurrMove(mov => mov + 1);
   };
 
-  const Btnclick = () => {
-    setCounter(currCounter => {
-      return currCounter + 1;
-    });
+  const moveTo = move => {
+    setCurrMove(move);
   };
 
+  const reset = () => {
+    setHistory([NEWGAME]);
+    setCurrMove(0);
+  };
   return (
     <div className="app">
-      <StatusMessage winn={winn} isXNext={isXNext} square={square} />
-      <Board square={square} handleSquareClick={handleSquareClick} />
+      <StatusMessage winn={winn} gameBoard={gameBoard} />
+      <Board
+        square={gameBoard.square}
+        handleSquareClick={handleSquareClick}
+        winnerSquare={winnerSquare}
+      />
+      <button
+        type="button"
+        onClick={reset}
+        className={`btn-reset ${winn ? 'active' : ''}`}
+      >
+        RESET
+      </button>
+      <h2>GAME HISTORY</h2>
+      <History history={history} moveTo={moveTo} currMove={currMove} />
     </div>
   );
 }

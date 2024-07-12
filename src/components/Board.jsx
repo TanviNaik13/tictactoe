@@ -1,10 +1,13 @@
 import Square from './Square';
-const Board = ({ square, handleSquareClick }) => {
+const Board = ({ square, handleSquareClick, winnerSquare }) => {
   const renderSquare = position => {
+    const isWinnSquare = winnerSquare.includes(position);
+
     return (
       <Square
         value={square[position]}
         onClick={() => handleSquareClick(position)}
+        isWinnSquare={isWinnSquare}
       />
     );
   };
