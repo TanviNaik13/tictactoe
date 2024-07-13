@@ -71,6 +71,7 @@ function App() {
       </button>
       <h2>GAME HISTORY</h2>
       <History history={history} moveTo={moveTo} currMove={currMove} />
+      <div className="bg-balls"></div>
     </div>
   );
 }
