@@ -52,6 +52,10 @@ function App() {
   };
   return (
     <div className="app">
+      <h1>
+        <span className="text-orange">TIC</span>{' '}
+        <span className="text-green">TAC</span> TOE
+      </h1>
       <StatusMessage winn={winn} gameBoard={gameBoard} />
       <Board
         square={gameBoard.square}
